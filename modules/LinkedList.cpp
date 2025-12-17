@@ -36,6 +36,7 @@ void LinkedList::insertAtEnd(int value)
     else
     {
         tail->next = newNode;
+        tail = newNode;
     }
 }
 
@@ -59,7 +60,7 @@ void LinkedList::removeFront()
     head = head->next;
     if (head == nullptr)
     {
-        tail == nullptr;
+        tail = nullptr;
     }
     delete temp;
 }
