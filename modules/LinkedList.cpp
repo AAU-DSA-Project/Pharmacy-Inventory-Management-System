@@ -5,6 +5,7 @@ using namespace std;
 LinkedList::LinkedList()
 {
     head = nullptr;
+    tail = nullptr;
 }
 
 bool LinkedList::isEmpty() const
@@ -30,16 +31,12 @@ void LinkedList::insertAtEnd(int value)
     if (isEmpty())
     {
         head = newNode;
-        return;
+        tail = newNode;
     }
-
-    Node *current = head;
-    while (current->next != nullptr)
+    else
     {
-        current = current->next;
+        tail->next = newNode;
     }
-
-    current->next = newNode;
 }
 
 void LinkedList::display() const
