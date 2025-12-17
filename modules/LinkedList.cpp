@@ -57,6 +57,10 @@ void LinkedList::removeFront()
 
     Node *temp = head;
     head = head->next;
+    if (head == nullptr)
+    {
+        tail == nullptr;
+    }
     delete temp;
 }
 
