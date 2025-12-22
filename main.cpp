@@ -1,10 +1,13 @@
 #include <iostream>
 using namespace std;
-#include "modules/Queue.h"
+#include "modules/DrugBST.h"
+#include "modules/PatientQueue.h"
 
 int main()
 {
-    Queue q;
-    q.enqueue(10);
-    q.display();
+    DrugBST dr;
+    PatientQueue pq;
+    dr.addDrug("iboprofien");
+    dr.addDrug("paracetamol");
+    dr.displayDrugs();
 }

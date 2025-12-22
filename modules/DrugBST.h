@@ -1,5 +1,5 @@
-#ifndef DRUGBST_H;
-#define DRUGBST_H ;
+#ifndef DRUGBST_H
+#define DRUGBST_H
 #include <string>
 using namespace std;
 

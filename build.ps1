@@ -1,3 +1,3 @@
-g++ main.cpp modules/LinkedList.cpp -o app.exe;
+g++ main.cpp modules/PatientQueue.cpp modules/DrugBST.cpp -o app.exe;
 Write-Host "Build Complete! Running ..."
 .\app.exe;
