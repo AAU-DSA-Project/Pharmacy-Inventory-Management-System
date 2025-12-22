@@ -4,4 +4,8 @@ System that will register patients, search drugs from given database, delete exp
 
 # How to run the file
 
-To run the file on your local terminal type ./build.ps1 and it will automaticaly run it
+To run the file on your local terminal type ./build.ps1 and it will automaticaly run it (change the code inside ./build.ps1 accordingly -->
+g++ main.cpp modules/PatientQueue.cpp modules/DrugBST.cpp -o app.exe;
+Write-Host "Build Complete! Running ..."
+.\app.exe;
+)
