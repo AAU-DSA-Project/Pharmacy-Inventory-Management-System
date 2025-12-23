@@ -3,45 +3,33 @@
 using namespace std;
 
 // Drug constructor
-Drug::Drug(string n, int i, int quan) : name(n), id(i), quantity(quan), left(nullptr), right(nullptr) {}
+Drug::Drug(string n) : name(n), left(nullptr), right(nullptr) {}
 
 // DrugBST constructor
 DrugBST::DrugBST() : root(nullptr) {}
 
 // Insert into BST
-Drug *DrugBST::insert(Drug *node, string name, int id, int quantity)
+Drug *DrugBST::insert(Drug *node, string name)
 {
     if (!node)
-        return new Drug(name, id, quantity);
+        return new Drug(name);
     if (name < node->name)
-        node->left = insert(node->left, name, id, quantity);
+        node->left = insert(node->left, name);
     else if (name > node->name)
-        node->right = insert(node->right, name, id, quantity);
+        node->right = insert(node->right, name);
     return node;
 }
 
-// Search by name in BST
-bool DrugBST::searchByName(Drug *node, string name)
+// Search in BST
+bool DrugBST::search(Drug *node, string name)
 {
     if (!node)
         return false;
     if (node->name == name)
         return true;
     if (name < node->name)
-        return searchByName(node->left, name);
-    return searchByName(node->right, name);
-}
-
-// Search by id in BST
-bool DrugBST::searchById(Drug *node, int id)
-{
-    if (!node)
-        return false;
-    if (node->id == id)
-        return true;
-    if (id < node->id)
-        return searchById(node->left, id);
-    return searchById(node->right, id);
+        return search(node->left, name);
+    return search(node->right, name);
 }
 
 // In-order traversal
@@ -50,25 +38,20 @@ void DrugBST::inorder(Drug *node)
     if (!node)
         return;
     inorder(node->left);
-    cout << node->name << ", " << node->id << ", " << node->quantity << endl;
+    cout << node->name << endl;
     inorder(node->right);
 }
 
 // Public methods
-void DrugBST::addDrug(string name, int id, int quantity)
+void DrugBST::addDrug(string name)
 {
-    root = insert(root, name, id, quantity);
+    root = insert(root, name);
 }
 
-void DrugBST::findDrugName(string name)
+void DrugBST::findDrug(string name)
 {
     cout << "Searching for " << name << ": "
-         << (searchByName(root, name) ? "Found" : "Not Found") << endl;
-}
-
-void DrugBST::findDrugId(int id)
-{
-    
+         << (search(root, name) ? "Found" : "Not Found") << endl;
 }
 
 void DrugBST::displayDrugs()

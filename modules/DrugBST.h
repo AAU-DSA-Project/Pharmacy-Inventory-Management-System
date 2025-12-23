@@ -5,30 +5,24 @@ using namespace std;
 
 struct Drug
 {
-    int id;
     string name;
     Drug *left;
     Drug *right;
-    int quantity;
-    string catagory;
-    string expiryDate;
-    Drug(string n, int i, int quan); // automatically initiallizes the res
+    Drug(string n); // automatically initiallizes the res
 };
 
 class DrugBST
 {
 private:
     Drug *root;
-    Drug *insert(Drug *node, string name, int id, int quantity);
-    bool searchByName(Drug *node, string name);
-    bool searchById(Drug *node, int id);
+    Drug *insert(Drug *node, string name);
+    bool search(Drug *node, string name);
     void inorder(Drug *node);
 
 public:
     DrugBST();
-    void addDrug(string name, int id, int quantity);
-    void findDrugName(string name);
-    void findDrugId(int id);
+    void addDrug(string name);
+    void findDrug(string name);
     void displayDrugs();
 };
 
