@@ -1,5 +1,6 @@
 #include "DrugBST.h"
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 // Drug constructor
@@ -42,6 +43,16 @@ void DrugBST::inorder(Drug *node)
     inorder(node->right);
 }
 
+// In-order traversal to file
+void DrugBST::inorderToFile(Drug *node, ofstream &out)
+{
+    if (!node)
+        return;
+    inorderToFile(node->left, out);
+    out << node->name << "\n";
+    inorderToFile(node->right, out);
+}
+
 // Public methods
 void DrugBST::addDrug(string name)
 {
@@ -58,4 +69,19 @@ void DrugBST::displayDrugs()
 {
     cout << "Drug list (sorted):" << endl;
     inorder(root);
+}
+
+void DrugBST::exportToFile(const string &filename)
+{
+    ofstream out(filename);
+    if (!out.is_open())
+    {
+        cerr << "Failed to open file: " << filename << endl;
+        return;
+    }
+    // Optional header for clarity
+    out << "name" << "\n";
+    inorderToFile(root, out);
+    out.close();
+    cout << "Drugs exported to: " << filename << endl;
 }
