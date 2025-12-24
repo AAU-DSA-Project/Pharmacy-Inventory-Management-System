@@ -21,6 +21,7 @@ public:
     void enqueue(int id, string name);
     void dequeue();
     void display();
+    void exportToFile(const string &filename) const;
 };
 
 #endif
