@@ -1,6 +1,9 @@
 #ifndef DRUGBST_H
 #define DRUGBST_H
 #include <string>
+
+#include <fstream>
+
 using namespace std;
 
 struct Drug
@@ -23,6 +26,7 @@ private:
     bool searchByName(Drug *node, string name);
     bool searchById(Drug *node, int id);
     void inorder(Drug *node);
+    void inorderToFile(Drug *node, ofstream &out);
 
 public:
     DrugBST();
@@ -31,6 +35,7 @@ public:
     void findDrugId(int id);
     void discard(string expiry);
     void displayDrugs();
+    void exportToFile(const string &filename);
 };
 
 #endif

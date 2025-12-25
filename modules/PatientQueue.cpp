@@ -1,5 +1,6 @@
 #include "PatientQueue.h"
 #include <iostream>
+#include <fstream>
 using namespace std;
 
 PatientQueue::PatientQueue() : front(nullptr), rear(nullptr) {}
@@ -42,4 +43,24 @@ void PatientQueue::display()
         cout << current->id << " - " << current->name << endl;
         current = current->next;
     }
+}
+
+void PatientQueue::exportToFile(const string &filename) const
+{
+    ofstream out(filename);
+    if (!out.is_open())
+    {
+        cerr << "Failed to open file: " << filename << endl;
+        return;
+    }
+    // Optional header for clarity
+    out << "id,name" << "\n";
+    Patient *current = front;
+    while (current != nullptr)
+    {
+        out << current->id << "," << current->name << "\n";
+        current = current->next;
+    }
+    out.close();
+    cout << "Patients exported to: " << filename << endl;
 }
