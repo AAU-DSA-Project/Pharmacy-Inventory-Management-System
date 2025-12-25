@@ -68,7 +68,8 @@ void DrugBST::findDrugName(string name)
 
 void DrugBST::findDrugId(int id)
 {
-    
+    cout << "Searching for " << id << ": "
+         << (searchById(root, id) ? "Found" : "Not Found" ) << endl;
 }
 
 void DrugBST::displayDrugs()
