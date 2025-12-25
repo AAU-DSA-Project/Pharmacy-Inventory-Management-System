@@ -4,33 +4,45 @@
 using namespace std;
 
 // Drug constructor
-Drug::Drug(string n) : name(n), left(nullptr), right(nullptr) {}
+Drug::Drug(string n, int i, int quan, string expirty) : name(n), id(i), quantity(quan), expiryDate(expirty), left(nullptr), right(nullptr) {}
 
 // DrugBST constructor
 DrugBST::DrugBST() : root(nullptr) {}
 
 // Insert into BST
-Drug *DrugBST::insert(Drug *node, string name)
+Drug *DrugBST::insert(Drug *node, string name, int id, int quantity, string expiryDate)
 {
     if (!node)
-        return new Drug(name);
+        return new Drug(name, id, quantity, expiryDate);
     if (name < node->name)
-        node->left = insert(node->left, name);
+        node->left = insert(node->left, name, id, quantity, expiryDate);
     else if (name > node->name)
-        node->right = insert(node->right, name);
+        node->right = insert(node->right, name, id, quantity, expiryDate);
     return node;
 }
 
 // Search in BST
-bool DrugBST::search(Drug *node, string name)
+bool DrugBST::searchByName(Drug *node, string name)
 {
     if (!node)
         return false;
     if (node->name == name)
         return true;
     if (name < node->name)
-        return search(node->left, name);
-    return search(node->right, name);
+        return searchByName(node->left, name);
+    return searchByName(node->right, name);
+}
+
+// Search by id in BST
+bool DrugBST::searchById(Drug *node, int id)
+{
+    if (!node)
+        return false;
+    if (node->id == id)
+        return true;
+    if (id < node->id)
+        return searchById(node->left, id);
+    return searchById(node->right, id);
 }
 
 // In-order traversal
@@ -39,7 +51,7 @@ void DrugBST::inorder(Drug *node)
     if (!node)
         return;
     inorder(node->left);
-    cout << node->name << endl;
+    cout << node->name << ", " << node->id << ", " << node->quantity << ", " << node->expiryDate << endl;
     inorder(node->right);
 }
 
@@ -54,15 +66,18 @@ void DrugBST::inorderToFile(Drug *node, ofstream &out)
 }
 
 // Public methods
-void DrugBST::addDrug(string name)
+void DrugBST::addDrug(string name, int id, int quantity, string expiryDate)
 {
-    root = insert(root, name);
+    root = insert(root, name, id, quantity, expiryDate);
 }
 
-void DrugBST::findDrug(string name)
+void DrugBST::findDrugName(string name)
 {
     cout << "Searching for " << name << ": "
-         << (search(root, name) ? "Found" : "Not Found") << endl;
+         << (searchByName(root, name) ? "Found" : "Not Found") << endl;
+}
+void DrugBST::findDrugId(int id)
+{
 }
 
 void DrugBST::displayDrugs()
