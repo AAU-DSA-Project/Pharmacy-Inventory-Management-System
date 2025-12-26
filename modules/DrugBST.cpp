@@ -65,6 +65,32 @@ void DrugBST::inorderToFile(Drug *node, ofstream &out)
         << node->expiryDate << "\n";
     inorderToFile(node->right, out);
 }
+// to import before starting the next step
+void DrugBST::importFromFile(const string &filename)
+{
+    ifstream in(filename);
+    if (!in.is_open())
+    {
+        cerr << "Failed to open file: " << filename << endl;
+        return;
+    }
+
+    string name, expiryDate;
+    int id, quantity;
+
+    // Skip header
+    string header;
+    getline(in, header);
+
+    while (in >> name >> id >> quantity >> expiryDate)
+    {
+        addDrug(name, id, quantity, expiryDate);
+    }
+
+    in.close();
+    cout << "Drugs imported from: " << filename << endl;
+}
+// to export into a separate file
 void DrugBST::exportToFile(const string &filename)
 {
     ofstream out(filename);

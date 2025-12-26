@@ -7,9 +7,12 @@ int main()
 {
     DrugBST dr;
     PatientQueue pq;
+    // import pre existing drugs
+    dr.importFromFile("drugs.csv");
+
     // Added drugs
-    dr.addDrug("iboprofien", 01, 10, "01-01-2026");
-    dr.addDrug("paracetamol", 02, 20, "01-02-2026");
+    dr.addDrug("iboprofien1", 01, 10, "01-01-2026");
+    dr.addDrug("paracetamol1", 02, 20, "01-02-2026");
     dr.displayDrugs();
 
     // patients added
