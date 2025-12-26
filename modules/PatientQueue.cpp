@@ -1,6 +1,8 @@
 #include "PatientQueue.h"
 #include <iostream>
+#include <sstream>
 #include <fstream>
+
 using namespace std;
 
 PatientQueue::PatientQueue() : front(nullptr), rear(nullptr) {}
@@ -43,6 +45,47 @@ void PatientQueue::display()
         cout << current->id << " - " << current->name << endl;
         current = current->next;
     }
+}
+// import from file before continuing further
+void PatientQueue::importFromFile(const string &filename)
+{
+    ifstream in(filename);
+    if (!in.is_open())
+    {
+        cerr << "Failed to open file: " << filename << endl;
+        return;
+    }
+
+    string line;
+    // Skip header
+    getline(in, line);
+
+    int id;
+    string name;
+
+    // Read each line as "id,name"
+    while (getline(in, line))
+    {
+        if (line.empty())
+            continue;
+
+        // Use a stringstream to parse the line
+        stringstream ss(line);
+        string idStr;
+
+        // Get id before comma
+        getline(ss, idStr, ',');
+        // Get name after comma
+        getline(ss, name);
+
+        // Convert id string to int
+        id = stoi(idStr);
+
+        enqueue(id, name);
+    }
+
+    in.close();
+    cout << "Patients imported from: " << filename << endl;
 }
 
 void PatientQueue::exportToFile(const string &filename) const

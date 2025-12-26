@@ -9,6 +9,7 @@ int main()
     PatientQueue pq;
     // import pre existing drugs
     dr.importFromFile("drugs.csv");
+    pq.importFromFile("patients.csv");
 
     // Added drugs
     dr.addDrug("iboprofien1", 01, 10, "01-01-2026");
@@ -16,8 +17,8 @@ int main()
     dr.displayDrugs();
 
     // patients added
-    pq.enqueue(1, "Alice");
-    pq.enqueue(2, "Bob");
+    pq.enqueue(3, "Mary");
+    pq.enqueue(4, "James");
     pq.display();
 
     // Export current data to files
