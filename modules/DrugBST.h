@@ -36,6 +36,7 @@ public:
     void discard(string expiry);
     void displayDrugs();
     void exportToFile(const string &filename);
+    void importFromFile(const string &filename);
 };
 
 #endif

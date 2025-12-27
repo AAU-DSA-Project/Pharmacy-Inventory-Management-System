@@ -22,6 +22,7 @@ public:
     void dequeue();
     void display();
     void exportToFile(const string &filename) const;
+    void importFromFile(const string &filename);
 };
 
 #endif
