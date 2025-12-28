@@ -1,5 +1,7 @@
 #include "DrugBST.h"
+#include "DateUtils.h"
 #include <iostream>
+#include <vector>
 #include <fstream>
 using namespace std;
 
@@ -20,6 +22,54 @@ Drug *DrugBST::insert(Drug *node, string name, int id, int quantity, string expi
         node->right = insert(node->right, name, id, quantity, expiryDate);
     return node;
 }
+
+Drug* DrugBST::deleteByName(Drug* node, const string& name)
+{
+    if (!node) return nullptr;
+
+    if (name < node->name)
+        node->left = deleteByName(node->left, name);
+    else if (name > node->name)
+        node->right = deleteByName(node->right, name);
+    else
+    {
+        if (!node->left && !node->right)
+        {
+            delete node;
+            return nullptr;
+        }
+
+        else if (!node->left)
+        {
+            Drug* temp = node->right;
+            delete node;
+            return temp;
+        }
+        else if (!node->right)
+        {
+            Drug* temp = node->left;
+            delete node;
+            return temp;
+        }
+
+        else
+        {
+
+            Drug* succ = node->right;
+            while (succ->left)
+                succ = succ->left;
+
+            node->name = succ->name;
+            node->id = succ->id;
+            node->quantity = succ->quantity;
+            node->expiryDate = succ->expiryDate;
+
+            node->right = deleteByName(node->right, succ->name);
+        }
+    }
+    return node;
+}
+
 
 // Search in BST
 bool DrugBST::searchByName(Drug *node, string name)
@@ -108,16 +158,6 @@ void DrugBST::exportToFile(const string &filename)
     cout << "Drugs exported to: " << filename << endl;
 }
 
-// In-order traversal to file
-void DrugBST::inorderToFile(Drug *node, ofstream &out)
-{
-    if (!node)
-        return;
-    inorderToFile(node->left, out);
-    out << node->name << "\n";
-    inorderToFile(node->right, out);
-}
-
 // Public methods
 void DrugBST::addDrug(string name, int id, int quantity, string expiryDate)
 {
@@ -131,6 +171,8 @@ void DrugBST::findDrugName(string name)
 }
 void DrugBST::findDrugId(int id)
 {
+    cout << "Searcing for " << id << ": "
+         << (searchById(root, id) ? "Found" : "Not Found") << endl;
 }
 
 void DrugBST::displayDrugs()
@@ -139,17 +181,60 @@ void DrugBST::displayDrugs()
     inorder(root);
 }
 
-void DrugBST::exportToFile(const string &filename)
+void DrugBST::clear(Drug* node)
 {
-    ofstream out(filename);
-    if (!out.is_open())
+    if (!node) return;
+    clear(node->left);
+    clear(node->right);
+    delete node;
+}
+
+void DrugBST::clearTree()
+{
+    clear(root);
+    root = nullptr;
+}
+
+void DrugBST::discardExpiredFromCSV(const string& filename)
+{
+    ifstream in(filename);
+    if (!in.is_open())
     {
         cerr << "Failed to open file: " << filename << endl;
         return;
     }
-    // Optional header for clarity
-    out << "name" << "\n";
-    inorderToFile(root, out);
-    out.close();
-    cout << "Drugs exported to: " << filename << endl;
+
+    vector<Drug> validDrugs;
+
+    string name, expiryDate;
+    int id, quantity;
+
+    // skip header
+    string header;
+    getline(in, header);
+
+    string today = getTodayDate();
+
+    while (in >> name >> id >> quantity >> expiryDate)
+    {
+        if (!isExpired(expiryDate, today))
+        {
+            validDrugs.emplace_back(name, id, quantity, expiryDate);
+        }
+        else
+        {
+            cout << "Discarded expired drug: " << name << endl;
+        }
+    }
+
+    in.close();
+
+    // rebuild BST
+    clearTree();
+    for (auto& d : validDrugs)
+        addDrug(d.name, d.id, d.quantity, d.expiryDate);
+
+    // overwrite CSV
+    exportToFile(filename);
 }
+
