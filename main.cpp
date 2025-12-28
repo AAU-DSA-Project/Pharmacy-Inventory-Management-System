@@ -12,8 +12,8 @@ int main()
     pq.importFromFile("patients.csv");
 
     // Added drugs
-    dr.addDrug("iboprofien1", 01, 10, "01-01-2026");
-    dr.addDrug("paracetamol1", 02, 20, "01-02-2026");
+    dr.addDrug("iboprofien1", 01, 10, "2026-01-01");
+    dr.addDrug("paracetamol1", 02, 20, "2026-02-01");
     dr.displayDrugs();
 
     // patients added

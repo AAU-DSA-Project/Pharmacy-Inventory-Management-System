@@ -1,10 +1,8 @@
+#include "modules/DateUtils.h"
 #include <iostream>
 using namespace std;
-#include "modules/Queue.h"
 
-int main()
-{
-    Queue q;
-    q.enqueue(10);
-    q.display();
+int main(){
+    string today = getTodayDate();
+    cout << isExpired("01-01-2025", today)<<endl;
 }
