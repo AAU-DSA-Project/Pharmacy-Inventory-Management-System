@@ -70,7 +70,6 @@ Drug* DrugBST::deleteByName(Drug* node, const string& name)
     return node;
 }
 
-
 // Search in BST
 bool DrugBST::searchByName(Drug *node, string name)
 {
@@ -141,6 +140,7 @@ void DrugBST::importFromFile(const string &filename)
     in.close();
     cout << "Drugs imported from: " << filename << endl;
 }
+
 // to export into a separate file
 void DrugBST::exportToFile(const string &filename)
 {
@@ -195,6 +195,20 @@ void DrugBST::clearTree()
     root = nullptr;
 }
 
+void DrugBST::clear(Drug* node)
+{
+    if (!node) return;
+    clear(node->left);
+    clear(node->right);
+    delete node;
+}
+
+void DrugBST::clearTree()
+{
+    clear(root);
+    root = nullptr;
+}
+
 void DrugBST::discardExpiredFromCSV(const string& filename)
 {
     ifstream in(filename);
@@ -203,22 +217,6 @@ void DrugBST::discardExpiredFromCSV(const string& filename)
         cerr << "Failed to open file: " << filename << endl;
         return;
     }
-    // Optional header for clarity
-    out << "name" << "\n";
-    inorderToFile(root, out);
-    out.close();
-    cout << "Drugs exported to: " << filename << endl;
-}
- //returns number of distinct drug nodes
-int DrugBST::getDrugTypeCount() {
-    return countNodes(root);
-}
-
-//helper to count nodes
-int DrugBST::countNodes(Drug *node) {
-    if (!node) return 0;
-    return 1 + countNodes(node->left) + countNodes(node->right);
-}
 
     vector<Drug> validDrugs;
 
@@ -253,4 +251,3 @@ int DrugBST::countNodes(Drug *node) {
     // overwrite CSV
     exportToFile(filename);
 }
-
