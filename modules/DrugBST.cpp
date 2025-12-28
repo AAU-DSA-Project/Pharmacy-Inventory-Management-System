@@ -1,4 +1,5 @@
 #include "DrugBST.h"
+#include "DateUtils.h"
 #include <iostream>
 #include <fstream>
 using namespace std;
@@ -121,10 +122,20 @@ void DrugBST::findDrugName(string name)
 }
 void DrugBST::findDrugId(int id)
 {
+    cout << "Searcing for " << id << ": "
+         << (searchById(root, id) ? "Found" : "Not Found") << endl;
 }
 
 void DrugBST::displayDrugs()
 {
     cout << "Drug list (sorted):" << endl;
     inorder(root);
+}
+
+void DrugBST::discard(Drug *node, string expired)
+{
+    string today = getTodayDate();
+    if(isExpired(expired, today)){
+        
+    }
 }

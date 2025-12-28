@@ -33,7 +33,7 @@ public:
     void addDrug(string name, int id, int quantity, string expiryDate);
     void findDrugName(string name);
     void findDrugId(int id);
-    void discard(string expiry);
+    void discard(Drug *node, string expiry);
     void displayDrugs();
     void exportToFile(const string &filename);
     void importFromFile(const string &filename);
