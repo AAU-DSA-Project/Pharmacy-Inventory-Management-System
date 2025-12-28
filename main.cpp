@@ -10,11 +10,17 @@ int main()
     // import pre existing drugs
     dr.importFromFile("drugs.csv");
     pq.importFromFile("patients.csv");
+    cout << endl;
 
     // Added drugs 
     dr.addDrug("Ibuprofen", 01, 10, "01-01-2026");
-    dr.addDrug("Paracetamol", 02, 20, "01-02-2026");
+    dr.addDrug("Paracetamol", 02, 20, "01-02-2026")
+    dr.addDrug("Cough Drops", 03, 13, "01-01-2024");
     dr.displayDrugs();
+    cout << endl;
+
+    // discarding expired drugs and writing files
+    dr.discardExpiredFromCSV("drugs.csv");
 
     // patients added
     pq.enqueue(1, "Abel");
@@ -24,7 +30,6 @@ int main()
     pq.display();
 
     // Export current data to files
-    dr.exportToFile("drugs.csv");
     pq.exportToFile("patients.csv");
 
     // Print totals
