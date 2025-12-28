@@ -1,6 +1,7 @@
 #include "DrugBST.h"
 #include "DateUtils.h"
 #include <iostream>
+#include <vector>
 #include <fstream>
 using namespace std;
 
@@ -180,21 +181,60 @@ void DrugBST::displayDrugs()
     inorder(root);
 }
 
-void DrugBST::discard(Drug *node)
+void DrugBST::clear(Drug* node)
 {
     if (!node) return;
+    clear(node->left);
+    clear(node->right);
+    delete node;
+}
 
-    discard(node->left);
-    discard(node->right);
+void DrugBST::clearTree()
+{
+    clear(root);
+    root = nullptr;
+}
+
+void DrugBST::discardExpiredFromCSV(const string& filename)
+{
+    ifstream in(filename);
+    if (!in.is_open())
+    {
+        cerr << "Failed to open file: " << filename << endl;
+        return;
+    }
+
+    vector<Drug> validDrugs;
+
+    string name, expiryDate;
+    int id, quantity;
+
+    // skip header
+    string header;
+    getline(in, header);
 
     string today = getTodayDate();
-    if(isExpired(node->expiryDate, today)){
-        cout << "Discarding expired drug: " << node->name << endl;
-        root = deleteByName(root, node->name);
+
+    while (in >> name >> id >> quantity >> expiryDate)
+    {
+        if (!isExpired(expiryDate, today))
+        {
+            validDrugs.emplace_back(name, id, quantity, expiryDate);
+        }
+        else
+        {
+            cout << "Discarded expired drug: " << name << endl;
+        }
     }
+
+    in.close();
+
+    // rebuild BST
+    clearTree();
+    for (auto& d : validDrugs)
+        addDrug(d.name, d.id, d.quantity, d.expiryDate);
+
+    // overwrite CSV
+    exportToFile(filename);
 }
 
-void DrugBST::discardExpiredDrugs()
-{
-    discard(root);
-}

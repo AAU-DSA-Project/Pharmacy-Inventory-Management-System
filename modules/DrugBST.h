@@ -28,7 +28,7 @@ private:
     bool searchById(Drug *node, int id);
     void inorder(Drug *node);
     void inorderToFile(Drug *node, ofstream &out);
-    void discard(Drug *node);
+    void clear(Drug *node);
 
 public:
     DrugBST();
@@ -38,7 +38,8 @@ public:
     void displayDrugs();
     void exportToFile(const string &filename);
     void importFromFile(const string &filename);
-    void discardExpiredDrugs();
+    void clearTree();
+    void discardExpiredFromCSV(const string &filename);
 };
 
 #endif
