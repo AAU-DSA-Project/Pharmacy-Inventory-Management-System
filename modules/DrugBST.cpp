@@ -22,6 +22,54 @@ Drug *DrugBST::insert(Drug *node, string name, int id, int quantity, string expi
     return node;
 }
 
+Drug* DrugBST::deleteByName(Drug* node, const string& name)
+{
+    if (!node) return nullptr;
+
+    if (name < node->name)
+        node->left = deleteByName(node->left, name);
+    else if (name > node->name)
+        node->right = deleteByName(node->right, name);
+    else
+    {
+        if (!node->left && !node->right)
+        {
+            delete node;
+            return nullptr;
+        }
+
+        else if (!node->left)
+        {
+            Drug* temp = node->right;
+            delete node;
+            return temp;
+        }
+        else if (!node->right)
+        {
+            Drug* temp = node->left;
+            delete node;
+            return temp;
+        }
+
+        else
+        {
+
+            Drug* succ = node->right;
+            while (succ->left)
+                succ = succ->left;
+
+            node->name = succ->name;
+            node->id = succ->id;
+            node->quantity = succ->quantity;
+            node->expiryDate = succ->expiryDate;
+
+            node->right = deleteByName(node->right, succ->name);
+        }
+    }
+    return node;
+}
+
+
 // Search in BST
 bool DrugBST::searchByName(Drug *node, string name)
 {
@@ -132,10 +180,21 @@ void DrugBST::displayDrugs()
     inorder(root);
 }
 
-void DrugBST::discard(Drug *node, string expired)
+void DrugBST::discard(Drug *node)
 {
+    if (!node) return;
+
+    discard(node->left);
+    discard(node->right);
+
     string today = getTodayDate();
-    if(isExpired(expired, today)){
-        
+    if(isExpired(node->expiryDate, today)){
+        cout << "Discarding expired drug: " << node->name << endl;
+        root = deleteByName(root, node->name);
     }
+}
+
+void DrugBST::discardExpiredDrugs()
+{
+    discard(root);
 }

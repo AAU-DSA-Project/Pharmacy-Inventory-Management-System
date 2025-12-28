@@ -14,7 +14,11 @@ int main()
     // Added drugs
     dr.addDrug("iboprofien1", 01, 10, "2026-01-01");
     dr.addDrug("paracetamol1", 02, 20, "2026-02-01");
+    dr.addDrug("cough drops", 03, 13, "2024-01-01");
     dr.displayDrugs();
+
+    // discarding expired drugs
+    dr.discardExpiredDrugs();
 
     // patients added
     pq.enqueue(3, "Mary");

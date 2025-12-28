@@ -23,20 +23,22 @@ class DrugBST
 private:
     Drug *root;
     Drug *insert(Drug *node, string name, int id, int quantity, string expiry);
+    Drug *deleteByName(Drug *node, const string& name);
     bool searchByName(Drug *node, string name);
     bool searchById(Drug *node, int id);
     void inorder(Drug *node);
     void inorderToFile(Drug *node, ofstream &out);
+    void discard(Drug *node);
 
 public:
     DrugBST();
     void addDrug(string name, int id, int quantity, string expiryDate);
     void findDrugName(string name);
     void findDrugId(int id);
-    void discard(Drug *node, string expiry);
     void displayDrugs();
     void exportToFile(const string &filename);
     void importFromFile(const string &filename);
+    void discardExpiredDrugs();
 };
 
 #endif
