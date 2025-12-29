@@ -3,6 +3,7 @@
 #include <string>
 
 #include <fstream>
+#include <vector>
 
 using namespace std;
 
@@ -30,6 +31,7 @@ private:
     void inorderToFile(Drug *node, ofstream &out);
     int countNodes(Drug *node);
     void clear(Drug *node);
+    void collectValidDrugs(Drug *node, vector<Drug> &valid, const string &today);
 
 public:
     DrugBST();

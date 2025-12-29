@@ -195,39 +195,23 @@ void DrugBST::clearTree()
     root = nullptr;
 }
 
+void DrugBST::collectValidDrugs(Drug *node, vector<Drug> &valid, const string &today)
+{
+    if (!node)
+        return;
+    collectValidDrugs(node->left, valid, today);
+    if (!isExpired(node->expiryDate, today))
+        valid.emplace_back(node->name, node->id, node->quantity, node->expiryDate);
+    else
+        cout << "Discarded expired drug: " << node->name << endl;
+    collectValidDrugs(node->right, valid, today);
+}
+
 void DrugBST::discardExpiredFromCSV(const string& filename)
 {
-    ifstream in(filename);
-    if (!in.is_open())
-    {
-        cerr << "Failed to open file: " << filename << endl;
-        return;
-    }
-
     vector<Drug> validDrugs;
-
-    string name, expiryDate;
-    int id, quantity;
-
-    // skip header
-    string header;
-    getline(in, header);
-
     string today = getTodayDate();
-
-    while (in >> name >> id >> quantity >> expiryDate)
-    {
-        if (!isExpired(expiryDate, today))
-        {
-            validDrugs.emplace_back(name, id, quantity, expiryDate);
-        }
-        else
-        {
-            cout << "Discarded expired drug: " << name << endl;
-        }
-    }
-
-    in.close();
+    collectValidDrugs(root, validDrugs, today);
 
     // rebuild BST
     clearTree();

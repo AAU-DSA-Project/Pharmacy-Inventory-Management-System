@@ -14,13 +14,14 @@ int main()
 
     // Added drugs 
     dr.addDrug("Ibuprofen", 01, 10, "2026-01-01");
-    dr.addDrug("Paracetamol", 02, 20, "2026-02-01");
+    dr.addDrug("Paracetamol", 02, 20, "2027-02-01");
     dr.addDrug("Cough Drops", 03, 13, "2024-01-01");
 
     dr.displayDrugs();
     cout << endl;
 
     // discarding expired drugs and writing files
+    //dr.exportToFile("drugs.csv");
     dr.discardExpiredFromCSV("drugs.csv");
 
     // patients added
