@@ -25,17 +25,10 @@ int main()
     dr.discardExpiredFromCSV("drugs.csv");
 
     // patients added
-    pq.enqueue(1, "Abel");
-    pq.enqueue(2, "Hanna");
-    pq.enqueue(3, "Abebe");
-    pq.enqueue(4, "Selam");
+    pq.enqueue(3, "Mary");
+    pq.enqueue(4, "James");
     pq.display();
 
     // Export current data to files
     pq.exportToFile("patients.csv");
-
-    // Print totals
-    cout << "Total number of drugs: " << dr.getDrugTypeCount() << endl;
-    cout << "Total patients registered: " << pq.getPatientCount() << endl;
-
 }
