@@ -2,3 +2,5 @@ build.sh
 app.exe
 drugs.csv
 patients.csv
+.vscode/
+*.exe
