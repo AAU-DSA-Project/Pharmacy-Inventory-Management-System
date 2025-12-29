@@ -238,3 +238,14 @@ void DrugBST::discardExpiredFromCSV(const string& filename)
     exportToFile(filename);
 }
 
+//returns number of distinct drug nodes
+int DrugBST::getDrugTypeCount() {
+    return countNodes(root);
+}
+
+//helper to count nodes
+int DrugBST::countNodes(Drug *node) {
+    if (!node) return 0;
+    return 1 + countNodes(node->left) + countNodes(node->right);
+}
+
