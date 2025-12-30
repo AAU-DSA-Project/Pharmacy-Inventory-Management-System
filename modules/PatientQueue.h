@@ -23,6 +23,8 @@ public:
     void display();
     void exportToFile(const string &filename) const;
     void importFromFile(const string &filename);
+    string getAllPatients();
+    string dequeueMessage();
 };
 
 #endif

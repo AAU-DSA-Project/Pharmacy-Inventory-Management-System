@@ -9,13 +9,12 @@ using namespace std;
 
 struct Drug
 {
-    int id;
     string name;
+    int id;
+    int quantity;
+    string expiryDate;
     Drug *left;
     Drug *right;
-    int quantity;
-    string catagory;
-    string expiryDate;
     Drug(string n, int i, int quan, string expiry); // automatically initiallizes the res
 };
 
@@ -32,6 +31,9 @@ private:
     int countNodes(Drug *node);
     void clear(Drug *node);
     void collectValidDrugs(Drug *node, vector<Drug> &valid, const string &today);
+    Drug* findNodeByName(Drug *node, string name);
+    Drug* findNodeById(Drug *node, int id);
+    void inorderToString(Drug *node, string &str);
 
 public:
     DrugBST();
@@ -44,6 +46,9 @@ public:
     int getDrugTypeCount();
     void clearTree();
     void discardExpiredFromCSV(const string &filename);
+    string getDrugDetailsByName(string name);
+    string getDrugDetailsById(int id);
+    string getAllDrugs();
 };
 
 #endif

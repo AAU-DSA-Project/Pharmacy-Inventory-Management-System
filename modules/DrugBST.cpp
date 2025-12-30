@@ -159,6 +159,29 @@ void DrugBST::exportToFile(const string &filename)
     cout << "Drugs exported to: " << filename << endl;
 }
 
+Drug* DrugBST::findNodeByName(Drug *node, string name) {
+    if (!node) return nullptr;
+    if (node->name == name) return node;
+    Drug* left = findNodeByName(node->left, name);
+    if (left) return left;
+    return findNodeByName(node->right, name);
+}
+
+Drug* DrugBST::findNodeById(Drug *node, int id) {
+    if (!node) return nullptr;
+    if (node->id == id) return node;
+    Drug* left = findNodeById(node->left, id);
+    if (left) return left;
+    return findNodeById(node->right, id);
+}
+
+void DrugBST::inorderToString(Drug *node, string &str) {
+    if (!node) return;
+    inorderToString(node->left, str);
+    str += node->name + ", " + to_string(node->id) + ", " + to_string(node->quantity) + ", " + node->expiryDate + "\n";
+    inorderToString(node->right, str);
+}
+
 // Public methods
 void DrugBST::addDrug(string name, int id, int quantity, string expiryDate)
 {
@@ -236,4 +259,28 @@ int DrugBST::countNodes(Drug *node)
     if (!node)
         return 0;
     return 1 + countNodes(node->left) + countNodes(node->right);
+}
+
+string DrugBST::getDrugDetailsByName(string name) {
+    Drug* node = findNodeByName(root, name);
+    if (node) {
+        return "Found: " + node->name + ", " + to_string(node->id) + ", " + to_string(node->quantity) + ", " + node->expiryDate;
+    } else {
+        return "Not Found";
+    }
+}
+
+string DrugBST::getDrugDetailsById(int id) {
+    Drug* node = findNodeById(root, id);
+    if (node) {
+        return "Found: " + node->name + ", " + to_string(node->id) + ", " + to_string(node->quantity) + ", " + node->expiryDate;
+    } else {
+        return "Not Found";
+    }
+}
+
+string DrugBST::getAllDrugs() {
+    string str = "Drug list (sorted):\n";
+    inorderToString(root, str);
+    return str;
 }

@@ -107,3 +107,24 @@ void PatientQueue::exportToFile(const string &filename) const
     out.close();
     cout << "Patients exported to: " << filename << endl;
 }
+
+string PatientQueue::getAllPatients() {
+    if (!front) return "Queue is empty";
+    string str = "Patients in queue:\n";
+    Patient *temp = front;
+    while (temp) {
+        str += temp->name + " (ID: " + to_string(temp->id) + ")\n";
+        temp = temp->next;
+    }
+    return str;
+}
+
+string PatientQueue::dequeueMessage() {
+    if (!front) return "Queue is empty";
+    Patient *temp = front;
+    string msg = "Dequeued: " + temp->name + " (ID: " + to_string(temp->id) + ")";
+    front = front->next;
+    if (!front) rear = nullptr;
+    delete temp;
+    return msg;
+}
