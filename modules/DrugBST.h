@@ -7,18 +7,15 @@
 
 using namespace std;
 
-struct Batch {
-    int quantity;
-    string expiryDate;
-};
-
 struct Drug
 {
-    string name;
     int id;
-    vector<Batch> batches;
+    string name;
     Drug *left;
     Drug *right;
+    int quantity;
+    string catagory;
+    string expiryDate;
     Drug(string n, int i, int quan, string expiry); // automatically initiallizes the res
 };
 
@@ -35,14 +32,10 @@ private:
     int countNodes(Drug *node);
     void clear(Drug *node);
     void collectValidDrugs(Drug *node, vector<Drug> &valid, const string &today);
-    Drug* findNodeByName(Drug *node, string name);
-    Drug* findNodeById(Drug *node, int id);
-    void inorderToString(Drug *node, string &str);
-    bool idExistsHelper(Drug *node, int id);
 
 public:
     DrugBST();
-    bool addDrug(string name, int id, int quantity, string expiryDate);
+    void addDrug(string name, int id, int quantity, string expiryDate);
     void findDrugName(string name);
     void findDrugId(int id);
     void displayDrugs();
@@ -51,14 +44,6 @@ public:
     int getDrugTypeCount();
     void clearTree();
     void discardExpiredFromCSV(const string &filename);
-    string getDrugDetailsByName(string name);
-    string getDrugDetailsById(int id);
-    string getAllDrugs();
-    bool nameExists(string name);
-    bool idExists(int id);
-    void updateQuantity(string name, int newQty, string newExpiry);
-    Drug* findNodeByNamePublic(string name);
-    Drug* findNodeByIdPublic(int id);
 };
 
 #endif
