@@ -137,6 +137,11 @@ int main()
     pq.enqueue(3, "Mary");
     pq.enqueue(4, "James");
     pq.display();
+    // count the number of drugs
+    int count = dr.getDrugTypeCount();
+    cout << "There are a total of " << count << " drugs currently." << endl;
+    // Export current data to files
+
     welcome(dr, pq);
 
     // Export current data to files
