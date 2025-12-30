@@ -21,6 +21,7 @@ void welcome(DrugBST &dr, PatientQueue &pq)
         cout << "9. Dequeue Patient" << endl;
         cout << "10. Display Patients" << endl;
         cout << "11. Export Patients to File" << endl;
+
         cout << "0. Exit" << endl;
         cout << "Choose an option: ";
         int choice;
@@ -61,8 +62,12 @@ void welcome(DrugBST &dr, PatientQueue &pq)
             break;
         }
         case 4:
+        {
+            int count = dr.getDrugTypeCount();
+            cout << "There are a total of " << count << " drugs currently." << endl;
             dr.displayDrugs();
             break;
+        }
         case 5:
         {
             string filename;
@@ -121,25 +126,24 @@ int main()
     pq.importFromFile("patients.csv");
     cout << endl;
 
-    // Added drugs
-    dr.addDrug("Ibuprofen", 01, 10, "2026-01-01");
-    dr.addDrug("Paracetamol", 02, 20, "2027-02-01");
-    dr.addDrug("Cough Drops", 03, 13, "2024-01-01");
+    // // Added drugs
+    // dr.addDrug("Ibuprofen", 01, 10, "2026-01-01");
+    // dr.addDrug("Paracetamol", 02, 20, "2027-02-01");
+    // dr.addDrug("Cough Drops", 03, 13, "2024-01-01");
 
-    dr.displayDrugs();
-    cout << endl;
+    // dr.displayDrugs();
+    // cout << endl;
 
     // discarding expired drugs and writing files
     // dr.exportToFile("drugs.csv");
-    dr.discardExpiredFromCSV("drugs.csv");
+    // dr.discardExpiredFromCSV("drugs.csv");
 
     // patients added
-    pq.enqueue(3, "Mary");
-    pq.enqueue(4, "James");
-    pq.display();
+    // pq.enqueue(3, "Mary");
+    // pq.enqueue(4, "James");
+    // pq.display();
     // count the number of drugs
-    int count = dr.getDrugTypeCount();
-    cout << "There are a total of " << count << " drugs currently." << endl;
+
     // Export current data to files
 
     welcome(dr, pq);
