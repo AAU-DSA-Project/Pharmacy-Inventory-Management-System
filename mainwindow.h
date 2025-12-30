@@ -28,6 +28,7 @@ private slots:
     void exportDrugs();
     void discardExpired();
     void clearDrugs();
+    void updateDrugQuantity();
     void addPatient();
     void dequeuePatient();
     void displayPatients();

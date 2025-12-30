@@ -7,12 +7,16 @@
 
 using namespace std;
 
+struct Batch {
+    int quantity;
+    string expiryDate;
+};
+
 struct Drug
 {
     string name;
     int id;
-    int quantity;
-    string expiryDate;
+    vector<Batch> batches;
     Drug *left;
     Drug *right;
     Drug(string n, int i, int quan, string expiry); // automatically initiallizes the res
@@ -34,10 +38,11 @@ private:
     Drug* findNodeByName(Drug *node, string name);
     Drug* findNodeById(Drug *node, int id);
     void inorderToString(Drug *node, string &str);
+    bool idExistsHelper(Drug *node, int id);
 
 public:
     DrugBST();
-    void addDrug(string name, int id, int quantity, string expiryDate);
+    bool addDrug(string name, int id, int quantity, string expiryDate);
     void findDrugName(string name);
     void findDrugId(int id);
     void displayDrugs();
@@ -49,6 +54,11 @@ public:
     string getDrugDetailsByName(string name);
     string getDrugDetailsById(int id);
     string getAllDrugs();
+    bool nameExists(string name);
+    bool idExists(int id);
+    void updateQuantity(string name, int newQty, string newExpiry);
+    Drug* findNodeByNamePublic(string name);
+    Drug* findNodeByIdPublic(int id);
 };
 
 #endif

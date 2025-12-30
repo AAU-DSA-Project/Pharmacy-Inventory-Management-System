@@ -6,7 +6,7 @@
 using namespace std;
 
 // Drug constructor
-Drug::Drug(string n, int i, int quan, string expirty) : name(n), id(i), quantity(quan), expiryDate(expirty), left(nullptr), right(nullptr) {}
+Drug::Drug(string n, int i, int quan, string expirty) : name(n), id(i), batches({{quan, expirty}}), left(nullptr), right(nullptr) {}
 
 // DrugBST constructor
 DrugBST::DrugBST() : root(nullptr) {}
@@ -62,8 +62,7 @@ Drug *DrugBST::deleteByName(Drug *node, const string &name)
 
             node->name = succ->name;
             node->id = succ->id;
-            node->quantity = succ->quantity;
-            node->expiryDate = succ->expiryDate;
+            node->batches = succ->batches;
 
             node->right = deleteByName(node->right, succ->name);
         }
@@ -101,7 +100,9 @@ void DrugBST::inorder(Drug *node)
     if (!node)
         return;
     inorder(node->left);
-    cout << node->name << ", " << node->id << ", " << node->quantity << ", " << node->expiryDate << endl;
+    for (auto& b : node->batches) {
+        cout << node->name << ", " << node->id << ", " << b.quantity << ", " << b.expiryDate << endl;
+    }
     inorder(node->right);
 }
 // to export in inorder manner
@@ -110,10 +111,12 @@ void DrugBST::inorderToFile(Drug *node, ofstream &out)
     if (!node)
         return;
     inorderToFile(node->left, out);
-    out << node->name << " "
-        << node->id << " "
-        << node->quantity << " "
-        << node->expiryDate << "\n";
+    for (auto& b : node->batches) {
+        out << node->name << " "
+            << node->id << " "
+            << b.quantity << " "
+            << b.expiryDate << "\n";
+    }
     inorderToFile(node->right, out);
 }
 // to import before starting the next step
@@ -135,7 +138,12 @@ void DrugBST::importFromFile(const string &filename)
 
     while (in >> name >> id >> quantity >> expiryDate)
     {
-        addDrug(name, id, quantity, expiryDate);
+        Drug* existing = findNodeByIdPublic(id);
+        if (existing) {
+            existing->batches.push_back({quantity, expiryDate});
+        } else {
+            addDrug(name, id, quantity, expiryDate);
+        }
     }
 
     in.close();
@@ -178,14 +186,50 @@ Drug* DrugBST::findNodeById(Drug *node, int id) {
 void DrugBST::inorderToString(Drug *node, string &str) {
     if (!node) return;
     inorderToString(node->left, str);
-    str += node->name + ", " + to_string(node->id) + ", " + to_string(node->quantity) + ", " + node->expiryDate + "\n";
+    str += node->name + ", " + to_string(node->id) + "\n";
+    for (auto& b : node->batches) {
+        str += "  Qty: " + to_string(b.quantity) + ", Expiry: " + b.expiryDate + "\n";
+    }
     inorderToString(node->right, str);
 }
 
+bool DrugBST::idExists(int id) {
+    return idExistsHelper(root, id);
+}
+
+bool DrugBST::idExistsHelper(Drug *node, int id) {
+    if (!node) return false;
+    if (node->id == id) return true;
+    return idExistsHelper(node->left, id) || idExistsHelper(node->right, id);
+}
+
+bool DrugBST::nameExists(string name) {
+    return searchByName(root, name);
+}
+
+Drug* DrugBST::findNodeByNamePublic(string name) {
+    return findNodeByName(root, name);
+}
+
+Drug* DrugBST::findNodeByIdPublic(int id) {
+    return findNodeById(root, id);
+}
+
+void DrugBST::updateQuantity(string name, int newQty, string newExpiry) {
+    Drug* node = findNodeByNamePublic(name);
+    if (node) {
+        node->batches.push_back({newQty, newExpiry});
+        exportToFile("drugs.csv");
+    }
+}
+
 // Public methods
-void DrugBST::addDrug(string name, int id, int quantity, string expiryDate)
+bool DrugBST::addDrug(string name, int id, int quantity, string expiryDate)
 {
+    if (idExists(id) || nameExists(name)) return false;
     root = insert(root, name, id, quantity, expiryDate);
+    exportToFile("drugs.csv");
+    return true;
 }
 
 void DrugBST::findDrugName(string name)
@@ -225,10 +269,22 @@ void DrugBST::collectValidDrugs(Drug *node, vector<Drug> &valid, const string &t
     if (!node)
         return;
     collectValidDrugs(node->left, valid, today);
-    if (!isExpired(node->expiryDate, today))
-        valid.emplace_back(node->name, node->id, node->quantity, node->expiryDate);
-    else
-        cout << "Discarded expired drug: " << node->name << endl;
+    Drug validDrug(node->name, node->id, 0, ""); // dummy
+    validDrug.batches.clear();
+    bool hasValid = false;
+    for (auto& b : node->batches) {
+        if (!isExpired(b.expiryDate, today)) {
+            validDrug.batches.push_back(b);
+            hasValid = true;
+        } else {
+            cout << "Discarded expired batch of " << node->name << ": " << b.expiryDate << endl;
+        }
+    }
+    if (hasValid) {
+        valid.push_back(validDrug);
+    } else {
+        cout << "Discarded drug with all expired batches: " << node->name << endl;
+    }
     collectValidDrugs(node->right, valid, today);
 }
 
@@ -240,8 +296,11 @@ void DrugBST::discardExpiredFromCSV(const string &filename)
 
     // rebuild BST
     clearTree();
-    for (auto &d : validDrugs)
-        addDrug(d.name, d.id, d.quantity, d.expiryDate);
+    for (auto &d : validDrugs) {
+        for (auto &b : d.batches) {
+            addDrug(d.name, d.id, b.quantity, b.expiryDate);
+        }
+    }
 
     // overwrite CSV
     exportToFile(filename);
@@ -262,21 +321,23 @@ int DrugBST::countNodes(Drug *node)
 }
 
 string DrugBST::getDrugDetailsByName(string name) {
-    Drug* node = findNodeByName(root, name);
-    if (node) {
-        return "Found: " + node->name + ", " + to_string(node->id) + ", " + to_string(node->quantity) + ", " + node->expiryDate;
-    } else {
-        return "Not Found";
+    Drug* node = findNodeByNamePublic(name);
+    if (!node) return "Not Found";
+    string str = "Drug: " + node->name + ", ID: " + to_string(node->id) + "\n";
+    for (size_t i = 0; i < node->batches.size(); ++i) {
+        str += "Batch " + to_string(i+1) + ": Qty " + to_string(node->batches[i].quantity) + ", Expiry " + node->batches[i].expiryDate + "\n";
     }
+    return str;
 }
 
 string DrugBST::getDrugDetailsById(int id) {
-    Drug* node = findNodeById(root, id);
-    if (node) {
-        return "Found: " + node->name + ", " + to_string(node->id) + ", " + to_string(node->quantity) + ", " + node->expiryDate;
-    } else {
-        return "Not Found";
+    Drug* node = findNodeByIdPublic(id);
+    if (!node) return "Not Found";
+    string str = "Drug: " + node->name + ", ID: " + to_string(node->id) + "\n";
+    for (size_t i = 0; i < node->batches.size(); ++i) {
+        str += "Batch " + to_string(i+1) + ": Qty " + to_string(node->batches[i].quantity) + ", Expiry " + node->batches[i].expiryDate + "\n";
     }
+    return str;
 }
 
 string DrugBST::getAllDrugs() {

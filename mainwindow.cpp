@@ -38,8 +38,9 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     QPushButton *exportDrugsBtn = new QPushButton("💾 Export Drugs");
     QPushButton *discardExpiredBtn = new QPushButton("🗑️ Discard Expired Drugs");
     QPushButton *clearDrugsBtn = new QPushButton("🧹 Clear Drug Tree");
+    QPushButton *updateDrugQtyBtn = new QPushButton("📦 Update Drug Quantity");
 
-    QList<QPushButton*> drugButtons = {addDrugBtn, findDrugNameBtn, findDrugIdBtn, displayDrugsBtn, exportDrugsBtn, discardExpiredBtn, clearDrugsBtn};
+    QList<QPushButton*> drugButtons = {addDrugBtn, findDrugNameBtn, findDrugIdBtn, displayDrugsBtn, exportDrugsBtn, discardExpiredBtn, clearDrugsBtn, updateDrugQtyBtn};
     for (auto btn : drugButtons) {
         btn->setStyleSheet("QPushButton { background-color: #87CEEB; color: white; border: none; padding: 10px; border-radius: 5px; font-size: 12px; } "
                            "QPushButton:hover { background-color: #4682B4; } "
@@ -54,6 +55,7 @@ MainWindow::MainWindow(QWidget *parent) : QMainWindow(parent) {
     connect(exportDrugsBtn, &QPushButton::clicked, this, &MainWindow::exportDrugs);
     connect(discardExpiredBtn, &QPushButton::clicked, this, &MainWindow::discardExpired);
     connect(clearDrugsBtn, &QPushButton::clicked, this, &MainWindow::clearDrugs);
+    connect(updateDrugQtyBtn, &QPushButton::clicked, this, &MainWindow::updateDrugQuantity);
 
     mainLayout->addWidget(drugsGroup);
 
@@ -94,6 +96,12 @@ void MainWindow::addDrug() {
     int qty = QInputDialog::getInt(this, "Add Drug", "Enter quantity:");
     QString expiry = QInputDialog::getText(this, "Add Drug", "Enter expiry date (YYYY-MM-DD):");
     if (expiry.isEmpty()) return;
+
+    if (dr.idExists(id)) {
+        QMessageBox::warning(this, "Error", "Drug with this ID already exists.");
+        return;
+    }
+
     dr.addDrug(name.toStdString(), id, qty, expiry.toStdString());
     QMessageBox::information(this, "Success", "Drug added successfully.");
 }
@@ -133,12 +141,29 @@ void MainWindow::clearDrugs() {
     QMessageBox::information(this, "Success", "Drug tree cleared.");
 }
 
+void MainWindow::updateDrugQuantity() {
+    QString name = QInputDialog::getText(this, "Update Drug Quantity", "Enter drug name:");
+    if (name.isEmpty()) return;
+    if (!dr.nameExists(name.toStdString())) {
+        QMessageBox::warning(this, "Error", "Drug not found.");
+        return;
+    }
+    int newQty = QInputDialog::getInt(this, "Update Drug Quantity", "Enter new quantity:");
+    QString newExpiry = QInputDialog::getText(this, "Update Drug Quantity", "Enter new expiry date (YYYY-MM-DD):");
+    if (newExpiry.isEmpty()) return;
+    dr.updateQuantity(name.toStdString(), newQty, newExpiry.toStdString());
+    QMessageBox::information(this, "Success", "Drug quantity and expiry updated successfully.");
+}
+
 void MainWindow::addPatient() {
     QString name = QInputDialog::getText(this, "Add Patient", "Enter patient name:");
     if (name.isEmpty()) return;
     int id = QInputDialog::getInt(this, "Add Patient", "Enter ID:");
-    pq.enqueue(id, name.toStdString());
-    QMessageBox::information(this, "Success", "Patient added successfully.");
+    if (pq.enqueue(id, name.toStdString())) {
+        QMessageBox::information(this, "Success", "Patient added successfully.");
+    } else {
+        QMessageBox::warning(this, "Error", "Patient with this ID already exists.");
+    }
 }
 
 void MainWindow::dequeuePatient() {

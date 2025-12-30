@@ -1,4 +1,4 @@
-#include <QApplication>
+#include <QtWidgets/QApplication>
 #include "mainwindow.h"
 
 int main(int argc, char *argv[]) {
@@ -15,14 +15,17 @@ int main(int argc, char *argv[]) {
     window.dr.addDrug("Paracetamol", 02, 20, "2027-02-01");
     window.dr.addDrug("Cough Drops", 03, 13, "2024-01-01");
 
-    // discarding expired drugs
-    window.dr.discardExpiredFromCSV("drugs.csv");
-
     // patients added
     window.pq.enqueue(3, "Mary");
     window.pq.enqueue(4, "James");
 
     window.show();
 
-    return app.exec();
+    int result = app.exec();
+
+    // Auto-save on exit
+    window.dr.exportToFile("drugs.csv");
+    window.pq.exportToFile("patients.csv");
+
+    return result;
 }

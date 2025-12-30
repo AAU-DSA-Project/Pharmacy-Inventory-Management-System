@@ -7,8 +7,18 @@ using namespace std;
 
 PatientQueue::PatientQueue() : front(nullptr), rear(nullptr) {}
 
-void PatientQueue::enqueue(int id, string name)
+bool PatientQueue::idExists(int id) {
+    Patient *temp = front;
+    while (temp) {
+        if (temp->id == id) return true;
+        temp = temp->next;
+    }
+    return false;
+}
+
+bool PatientQueue::enqueue(int id, string name)
 {
+    if (idExists(id)) return false;
     Patient *newPatient = new Patient{id, name, nullptr};
     if (rear == nullptr)
     {
@@ -19,6 +29,7 @@ void PatientQueue::enqueue(int id, string name)
         rear->next = newPatient;
         rear = newPatient;
     }
+    return true;
 }
 
 void PatientQueue::dequeue()

@@ -15,10 +15,11 @@ class PatientQueue
 private:
     Patient *front;
     Patient *rear;
+    bool idExists(int id);
 
 public:
     PatientQueue();
-    void enqueue(int id, string name);
+    bool enqueue(int id, string name);
     void dequeue();
     void display();
     void exportToFile(const string &filename) const;
