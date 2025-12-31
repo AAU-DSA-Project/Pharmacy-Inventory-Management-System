@@ -20,12 +20,24 @@ Drug *DrugBST::insert(Drug *node, string name, int id, int quantity, string expi
         node->left = insert(node->left, name, id, quantity, expiryDate);
     else if (name > node->name)
         node->right = insert(node->right, name, id, quantity, expiryDate);
+    else
+    {
+        // NAME MATCHES: The drug already exists!
+        // Increment the quantity instead of creating a new node
+        node->quantity += quantity;
+
+        // Optional: Update the expiry date if the new batch is different
+        node->expiryDate = expiryDate;
+
+        cout << "Update: Added " << quantity << " to existing stock of " << name << endl;
+    }
     return node;
 }
 
-Drug* DrugBST::deleteByName(Drug* node, const string& name)
+Drug *DrugBST::deleteByName(Drug *node, const string &name)
 {
-    if (!node) return nullptr;
+    if (!node)
+        return nullptr;
 
     if (name < node->name)
         node->left = deleteByName(node->left, name);
@@ -41,13 +53,13 @@ Drug* DrugBST::deleteByName(Drug* node, const string& name)
 
         else if (!node->left)
         {
-            Drug* temp = node->right;
+            Drug *temp = node->right;
             delete node;
             return temp;
         }
         else if (!node->right)
         {
-            Drug* temp = node->left;
+            Drug *temp = node->left;
             delete node;
             return temp;
         }
@@ -55,7 +67,7 @@ Drug* DrugBST::deleteByName(Drug* node, const string& name)
         else
         {
 
-            Drug* succ = node->right;
+            Drug *succ = node->right;
             while (succ->left)
                 succ = succ->left;
 
@@ -69,7 +81,6 @@ Drug* DrugBST::deleteByName(Drug* node, const string& name)
     }
     return node;
 }
-
 
 // Search in BST
 bool DrugBST::searchByName(Drug *node, string name)
@@ -141,6 +152,7 @@ void DrugBST::importFromFile(const string &filename)
     in.close();
     cout << "Drugs imported from: " << filename << endl;
 }
+
 // to export into a separate file
 void DrugBST::exportToFile(const string &filename)
 {
@@ -181,9 +193,10 @@ void DrugBST::displayDrugs()
     inorder(root);
 }
 
-void DrugBST::clear(Drug* node)
+void DrugBST::clear(Drug *node)
 {
-    if (!node) return;
+    if (!node)
+        return;
     clear(node->left);
     clear(node->right);
     delete node;
@@ -207,7 +220,7 @@ void DrugBST::collectValidDrugs(Drug *node, vector<Drug> &valid, const string &t
     collectValidDrugs(node->right, valid, today);
 }
 
-void DrugBST::discardExpiredFromCSV(const string& filename)
+void DrugBST::discardExpiredFromCSV(const string &filename)
 {
     vector<Drug> validDrugs;
     string today = getTodayDate();
@@ -215,21 +228,23 @@ void DrugBST::discardExpiredFromCSV(const string& filename)
 
     // rebuild BST
     clearTree();
-    for (auto& d : validDrugs)
+    for (auto &d : validDrugs)
         addDrug(d.name, d.id, d.quantity, d.expiryDate);
 
     // overwrite CSV
     exportToFile(filename);
 }
 
-//returns number of distinct drug nodes
-int DrugBST::getDrugTypeCount() {
+// returns number of distinct drug nodes
+int DrugBST::getDrugTypeCount()
+{
     return countNodes(root);
 }
 
-//helper to count nodes
-int DrugBST::countNodes(Drug *node) {
-    if (!node) return 0;
+// helper to count nodes
+int DrugBST::countNodes(Drug *node)
+{
+    if (!node)
+        return 0;
     return 1 + countNodes(node->left) + countNodes(node->right);
 }
-
