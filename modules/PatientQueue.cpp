@@ -126,3 +126,13 @@ void PatientQueue::exportToFile(const string &filename) const
     out.close();
     cout << "Patients exported to: " << filename << endl;
 }
+
+int PatientQueue::getPatientCount() const {
+    int count = 0;
+    Patient *current = front;
+    while (current) {
+        ++count;
+        current = current->next;
+    }
+    return count;
+}
