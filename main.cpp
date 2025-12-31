@@ -2,6 +2,7 @@
 using namespace std;
 #include "modules/DrugBST.h"
 #include "modules/PatientQueue.h"
+#include "ctype.h"
 
 void welcome(DrugBST &dr, PatientQueue &pq)
 {
@@ -137,6 +138,26 @@ void welcome(DrugBST &dr, PatientQueue &pq)
             break;
         default:
             cout << "Invalid choice." << endl;
+        }
+
+        // Check if menue is exited
+
+        if(!running){
+            break;
+        }
+
+        cout << "Do you want to continue? Y/n" << endl;
+        char cont;
+        cin >> cont;
+        switch(toupper(cont)){
+            case 'Y':
+                continue;
+                break;
+            case 'N':
+                running = false;
+                break;
+            default:
+                cout << "Invalid choice." << endl;
         }
     }
 }
