@@ -21,7 +21,9 @@ void welcome(DrugBST &dr, PatientQueue &pq)
         cout << "9. Dequeue Patient" << endl;
         cout << "10. Display Patients" << endl;
         cout << "11. Export Patients to File" << endl;
-
+        cout << "12. Show total number of patients" << endl;
+        cout << "13. Show drugs that need restock (qty < 5)" << endl;
+        cout << "14. Show price & total value for drug by ID" << endl;
         cout << "0. Exit" << endl;
         cout << "Choose an option: ";
         int choice;
@@ -32,6 +34,7 @@ void welcome(DrugBST &dr, PatientQueue &pq)
         {
             string name, expiry;
             int id, qty;
+            double price;
             cout << "Enter drug name: ";
             cin.ignore();
             getline(cin, name);
@@ -39,9 +42,11 @@ void welcome(DrugBST &dr, PatientQueue &pq)
             cin >> id;
             cout << "Enter quantity: ";
             cin >> qty;
+            cout << "Enter price per unit: ";
+            cin >> price;
             cout << "Enter expiry date (YYYY-MM-DD): ";
             cin >> expiry;
-            dr.addDrug(name, id, qty, expiry);
+            dr.addDrug(name, id, qty, expiry, price);
             break;
         }
         case 2:
@@ -108,6 +113,25 @@ void welcome(DrugBST &dr, PatientQueue &pq)
             pq.exportToFile(filename);
             break;
         }
+        case 12:
+           cout << "Total patients: " << pq.getPatientCount() << endl;
+           break;
+         case 13:
+        {
+            cout << "Drugs with quantity < 5 (restock needed):" << endl;
+            // we already print restock notices when displaying all; call display
+            dr.displayDrugs();
+            break;
+        }
+        case 14:
+        {
+            int id;
+            cout << "Enter drug ID to show price and total value: ";
+            cin >> id;
+            dr.findDrugId(id);
+            break;
+        }
+        
         case 0:
             running = false;
             break;
@@ -151,4 +175,7 @@ int main()
     // Export current data to files
     dr.exportToFile("drugs.csv");
     pq.exportToFile("patients.csv");
+
+
+
 }

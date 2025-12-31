@@ -11,5 +11,5 @@ int main(){
     dr.addDrug("cough drop", 03, 30, "2024-01-01");
     dr.displayDrugs();
 
-    dr.discardExpiredDrugs();
+    // dr.discardExpiredDrugs();
 }
