@@ -20,7 +20,7 @@ bool PatientQueue::idExists(int id)
     return false; // No match found
 }
 
-void PatientQueue::enqueue(int id, string name)
+void PatientQueue::enqueue(int id, string name, bool pregnant)
 {
     // Check for duplicate ID before doing anything else
     if (idExists(id))
@@ -28,7 +28,7 @@ void PatientQueue::enqueue(int id, string name)
         cout << "Error: Patient with ID " << id << " already exists. Skipping..." << endl;
         return;
     }
-    Patient *newPatient = new Patient{id, name, nullptr};
+    Patient *newPatient = new Patient{id, name, pregnant, nullptr};
     if (rear == nullptr)
     {
         front = rear = newPatient;
@@ -55,13 +55,23 @@ void PatientQueue::dequeue()
     delete temp;
 }
 
+string PatientQueue::isPregnant(Patient *patient) const {
+    if(patient->pregnant){
+        return "Pregnant";
+    }else{
+        return "Not Pregnant";
+    }
+    return "";
+}
+
+
 void PatientQueue::display()
 {
     Patient *current = front;
     cout << "Patients in queue:" << endl;
     while (current != nullptr)
     {
-        cout << current->id << " - " << current->name << endl;
+        cout << current->id << " - " << current->name << " - " << isPregnant(current) << endl;
         current = current->next;
     }
 }
@@ -81,6 +91,7 @@ void PatientQueue::importFromFile(const string &filename)
 
     int id;
     string name;
+    bool pregnant;
 
     // Read each line as "id,name"
     while (getline(in, line))
@@ -100,7 +111,7 @@ void PatientQueue::importFromFile(const string &filename)
         // Convert id string to int
         id = stoi(idStr);
 
-        enqueue(id, name);
+        enqueue(id, name, pregnant);
     }
 
     in.close();
@@ -116,11 +127,11 @@ void PatientQueue::exportToFile(const string &filename) const
         return;
     }
     // Optional header for clarity
-    out << "id,name" << "\n";
+    out << "id,name,pregnant" << "\n";
     Patient *current = front;
     while (current != nullptr)
     {
-        out << current->id << "," << current->name << "\n";
+        out << current->id << "," << current->name << "," << isPregnant(current) <<"\n";
         current = current->next;
     }
     out.close();

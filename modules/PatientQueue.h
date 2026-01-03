@@ -8,6 +8,7 @@ struct Patient
 {
     int id;
     string name;
+    bool pregnant;
     Patient *next;
 };
 class PatientQueue
@@ -19,8 +20,9 @@ private:
 public:
     PatientQueue();
     bool idExists(int id);
-    void enqueue(int id, string name);
+    void enqueue(int id, string name, bool pregnant);
     void dequeue();
+    string isPregnant(Patient *patient) const;
     void display();
     void exportToFile(const string &filename) const;
     void importFromFile(const string &filename);
