@@ -92,12 +92,15 @@ void welcome(DrugBST &dr, PatientQueue &pq)
         {
             string name;
             int id;
+            bool isPregnant;
             cout << "Enter patient name: ";
             cin.ignore();
             getline(cin, name);
             cout << "Enter ID: ";
             cin >> id;
-            pq.enqueue(id, name);
+            cout<<"Pregnant? enter : 0 or 1";
+            cin>>isPregnant;
+            pq.enqueue(id, name, isPregnant);
             break;
         }
         case 9:
