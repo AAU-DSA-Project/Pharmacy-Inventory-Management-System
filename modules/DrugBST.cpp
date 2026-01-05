@@ -32,7 +32,17 @@ Drug *DrugBST::insert(Drug *node, string name, int id, int quantity, string expi
     name = toLower(name);
     if (!node)
         return new Drug(name, id, quantity, expiryDate, price);
-    
+    if (findById(root, id))
+    {
+        cerr << "Duplicate ID detected: " << id << endl;
+        return node;
+    }
+    if (quantity <= 0)
+    {
+        cerr << "Invalid quantity for " << name << endl;
+        return node;
+    }
+
     if (name < node->name)
         node->left = insert(node->left, name, id, quantity, expiryDate, price);
     else if (name > node->name)
@@ -59,9 +69,9 @@ Drug *DrugBST::deleteByName(Drug *node, const string &name)
     string targetName = toLower(name);
 
     if (targetName < nodeName)
-        node->left = deleteByName(node->left, name);
+        node->left = deleteByName(node->left, targetName);
     else if (name > node->name)
-        node->right = deleteByName(node->right, name);
+        node->right = deleteByName(node->right, targetName);
     else
     {
         if (!node->left && !node->right)
