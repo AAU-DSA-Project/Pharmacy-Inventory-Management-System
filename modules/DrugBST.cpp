@@ -3,7 +3,22 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <string>
+#include <sstream>
 using namespace std;
+#include <algorithm>
+#include <cctype>
+
+string toLower(const string &s)
+{
+    string result = s;
+    for (char &c : result)
+    {
+        c = tolower(c);
+    }
+
+    return result;
+}
 
 // Drug constructor
 Drug::Drug(string n, int i, int quan, string expirty, double priceVal) : name(n), id(i), quantity(quan), expiryDate(expirty), price(priceVal), left(nullptr), right(nullptr) {}
@@ -14,8 +29,10 @@ DrugBST::DrugBST() : root(nullptr) {}
 // Insert into BST
 Drug *DrugBST::insert(Drug *node, string name, int id, int quantity, string expiryDate, double price)
 {
+    name = toLower(name);
     if (!node)
         return new Drug(name, id, quantity, expiryDate, price);
+    
     if (name < node->name)
         node->left = insert(node->left, name, id, quantity, expiryDate, price);
     else if (name > node->name)
@@ -38,8 +55,10 @@ Drug *DrugBST::deleteByName(Drug *node, const string &name)
 {
     if (!node)
         return nullptr;
+    string nodeName = toLower(node->name);
+    string targetName = toLower(name);
 
-    if (name < node->name)
+    if (targetName < nodeName)
         node->left = deleteByName(node->left, name);
     else if (name > node->name)
         node->right = deleteByName(node->right, name);
@@ -88,9 +107,11 @@ bool DrugBST::searchByName(Drug *node, string name)
 {
     if (!node)
         return false;
-    if (node->name == name)
+    string nodeName = toLower(node->name);
+    string searchName = toLower(name);
+    if (nodeName == searchName)
         return true;
-    if (name < node->name)
+    if (searchName < nodeName)
         return searchByName(node->left, name);
     return searchByName(node->right, name);
 }
@@ -158,16 +179,28 @@ void DrugBST::importFromFile(const string &filename)
         return;
     }
 
-    string name, expiryDate;
-    int id, quantity;
-    double price;
+    string line;
+    getline(in, line); // skip header
 
-    // Skip header
-    string header;
-    getline(in, header);
-
-    while (in >> name >> id >> quantity >> expiryDate >> price)
+    while (getline(in, line))
     {
+        stringstream ss(line);
+        string name, expiryDate;
+        int id, quantity;
+        double price;
+
+        string idStr, quantityStr, priceStr;
+
+        getline(ss, name, ',');
+        getline(ss, idStr, ',');
+        getline(ss, quantityStr, ',');
+        getline(ss, expiryDate, ',');
+        getline(ss, priceStr, ',');
+
+        id = stoi(idStr);
+        quantity = stoi(quantityStr);
+        price = stod(priceStr);
+
         addDrug(name, id, quantity, expiryDate, price);
     }
 
@@ -185,7 +218,7 @@ void DrugBST::exportToFile(const string &filename)
         return;
     }
 
-    out << "name id quantity expiryDate\n";
+    out << "name,id,quantity,expiryDate,price\n";
     inorderToFile(root, out);
 
     out.close();
