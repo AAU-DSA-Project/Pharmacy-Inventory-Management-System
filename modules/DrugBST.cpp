@@ -3,19 +3,46 @@
 #include <iostream>
 #include <vector>
 #include <fstream>
+#include <string>
+#include <sstream>
 using namespace std;
+#include <algorithm>
+#include <cctype>
+
+string toLower(const string &s)
+{
+    string result = s;
+    for (char &c : result)
+    {
+        c = tolower(c);
+    }
+
+    return result;
+}
 
 // Drug constructor
-Drug::Drug(string n, int i, int quan, string expirty, double priceVal): name(n), id(i), quantity(quan), expiryDate(expirty), price(priceVal), left(nullptr), right(nullptr) {}
+Drug::Drug(string n, int i, int quan, string expirty, double priceVal) : name(n), id(i), quantity(quan), expiryDate(expirty), price(priceVal), left(nullptr), right(nullptr) {}
 
 // DrugBST constructor
 DrugBST::DrugBST() : root(nullptr) {}
 
 // Insert into BST
-Drug *DrugBST::insert(Drug *node, string name, int id, int quantity, string expiryDate,double price)
+Drug *DrugBST::insert(Drug *node, string name, int id, int quantity, string expiryDate, double price)
 {
+    name = toLower(name);
     if (!node)
         return new Drug(name, id, quantity, expiryDate, price);
+    if (findById(root, id))
+    {
+        cerr << "Duplicate ID detected: " << id << endl;
+        return node;
+    }
+    if (quantity <= 0)
+    {
+        cerr << "Invalid quantity for " << name << endl;
+        return node;
+    }
+
     if (name < node->name)
         node->left = insert(node->left, name, id, quantity, expiryDate, price);
     else if (name > node->name)
@@ -38,11 +65,13 @@ Drug *DrugBST::deleteByName(Drug *node, const string &name)
 {
     if (!node)
         return nullptr;
+    string nodeName = toLower(node->name);
+    string targetName = toLower(name);
 
-    if (name < node->name)
-        node->left = deleteByName(node->left, name);
+    if (targetName < nodeName)
+        node->left = deleteByName(node->left, targetName);
     else if (name > node->name)
-        node->right = deleteByName(node->right, name);
+        node->right = deleteByName(node->right, targetName);
     else
     {
         if (!node->left && !node->right)
@@ -88,9 +117,11 @@ bool DrugBST::searchByName(Drug *node, string name)
 {
     if (!node)
         return false;
-    if (node->name == name)
+    string nodeName = toLower(node->name);
+    string searchName = toLower(name);
+    if (nodeName == searchName)
         return true;
-    if (name < node->name)
+    if (searchName < nodeName)
         return searchByName(node->left, name);
     return searchByName(node->right, name);
 }
@@ -108,13 +139,16 @@ bool DrugBST::searchById(Drug *node, int id)
 }
 
 // helper: return pointer to node by id (or nullptr)
-Drug* DrugBST::findById(Drug* node, int id)
- {
-    if (!node) return nullptr;
-    if (node->id == id) return node;
+Drug *DrugBST::findById(Drug *node, int id)
+{
+    if (!node)
+        return nullptr;
+    if (node->id == id)
+        return node;
 
-    Drug* leftResult = findById(node->left, id);
-    if (leftResult) return leftResult;
+    Drug *leftResult = findById(node->left, id);
+    if (leftResult)
+        return leftResult;
 
     return findById(node->right, id);
 }
@@ -129,7 +163,7 @@ void DrugBST::inorder(Drug *node)
          << " | ID: " << node->id
          << " | Qty: " << node->quantity
          << " | Expiry: " << node->expiryDate
-         << " | Price: $"  << node->price;
+         << " | Price: $" << node->price;
     if (node->quantity < 5)
         cout << "  <-- RESTOCK NEEDED";
     cout << endl;
@@ -141,7 +175,7 @@ void DrugBST::inorderToFile(Drug *node, ofstream &out)
     if (!node)
         return;
     inorderToFile(node->left, out);
-// CSV: name,id,quantity,expiry,price
+    // CSV: name,id,quantity,expiry,price
     out << node->name << "," << node->id << "," << node->quantity << "," << node->expiryDate << "," << node->price << "\n";
     inorderToFile(node->right, out);
 }
@@ -155,16 +189,28 @@ void DrugBST::importFromFile(const string &filename)
         return;
     }
 
-    string name, expiryDate;
-    int id, quantity;
-    double price;
+    string line;
+    getline(in, line); // skip header
 
-    // Skip header
-    string header;
-    getline(in, header);
-
-    while (in >> name >> id >> quantity >> expiryDate>> price)
+    while (getline(in, line))
     {
+        stringstream ss(line);
+        string name, expiryDate;
+        int id, quantity;
+        double price;
+
+        string idStr, quantityStr, priceStr;
+
+        getline(ss, name, ',');
+        getline(ss, idStr, ',');
+        getline(ss, quantityStr, ',');
+        getline(ss, expiryDate, ',');
+        getline(ss, priceStr, ',');
+
+        id = stoi(idStr);
+        quantity = stoi(quantityStr);
+        price = stod(priceStr);
+
         addDrug(name, id, quantity, expiryDate, price);
     }
 
@@ -182,7 +228,7 @@ void DrugBST::exportToFile(const string &filename)
         return;
     }
 
-    out << "name id quantity expiryDate\n";
+    out << "name,id,quantity,expiryDate,price\n";
     inorderToFile(root, out);
 
     out.close();
@@ -201,9 +247,9 @@ void DrugBST::findDrugName(string name)
          << (searchByName(root, name) ? "Found" : "Not Found") << endl;
 }
 
- void DrugBST::findDrugId(int id)
+void DrugBST::findDrugId(int id)
 {
-    Drug* node = findById(root, id);
+    Drug *node = findById(root, id);
     if (!node)
     {
         cout << "Drug with ID " << id << " not found." << endl;
@@ -219,7 +265,6 @@ void DrugBST::findDrugName(string name)
     if (node->quantity < 5)
         cout << "RESTOCK NEEDED" << endl;
 }
-
 
 void DrugBST::displayDrugs()
 {
@@ -249,7 +294,7 @@ void DrugBST::collectValidDrugs(Drug *node, vector<Drug> &valid, const string &t
     collectValidDrugs(node->left, valid, today);
     if (!isExpired(node->expiryDate, today))
         valid.emplace_back(node->name, node->id, node->quantity, node->expiryDate, node->price);
-    else 
+    else
         cout << "Discarded expired drug: " << node->name << endl;
     collectValidDrugs(node->right, valid, today);
 }
