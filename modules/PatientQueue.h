@@ -22,6 +22,7 @@ public:
     bool idExists(int id);
     void enqueue(int id, string name, bool isPregnant);
     void dequeue();
+    string isPregnant(Patient *patient) const;
     void display();
     void exportToFile(const string &filename) const;
     void importFromFile(const string &filename);
