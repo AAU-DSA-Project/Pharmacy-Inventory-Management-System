@@ -138,8 +138,8 @@ bool DrugBST::searchById(Drug *node, int id)
         return false;
     if (node->id == id)
         return true;
-    if (id < node->id)
-        return searchById(node->left, id);
+    if (searchById(node->left, id))
+        return true;
     return searchById(node->right, id);
 }
 
@@ -243,6 +243,10 @@ void DrugBST::exportToFile(const string &filename)
 // Public methods
 void DrugBST::addDrug(string name, int id, int quantity, string expiryDate, double price)
 {
+    if (!isValidDate(expiryDate)) {
+        cerr << "Invalid expiry date format. Please use YYYY-MM-DD." << endl;
+        return;
+    }
     root = insert(root, name, id, quantity, expiryDate, price);
 }
 

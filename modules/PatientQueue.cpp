@@ -81,16 +81,6 @@ void PatientQueue::dequeue()
     delete temp;
 }
 
-string PatientQueue::isPregnant(Patient *patient) const {
-    if(patient->pregnant){
-        return "Pregnant";
-    }else{
-        return "Not Pregnant";
-    }
-    return "";
-}
-
-
 void PatientQueue::display()
 {
     Patient *current = front;
